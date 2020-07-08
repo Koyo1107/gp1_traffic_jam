@@ -13,8 +13,8 @@ import warnings
 
 warnings.simplefilter('ignore')
 
-config_path='cfg/yolov4.cfg'
-weights_path='yolov4.weights'
+config_path='cfg/yolov3.cfg'
+weights_path='yolov3.weights'
 class_path='data/coco.names'
 img_size=416
 conf_thres=0.8
@@ -58,7 +58,7 @@ colors = [cmap(i)[:3] for i in np.linspace(0, 1, 20)]
 import cv2
 from sort import *
 
-vid = cv2.VideoCapture("traffic_jam_demo.mp4")
+vid = cv2.VideoCapture("short_traffic_demo.mp4")
 
 fps = int(vid.get(cv2.CAP_PROP_FPS))
 w = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -111,11 +111,16 @@ while(vid.isOpened()):
             for i in classes:
                 if cls == i:
                     count += 1
+            
+            xbox_size = x1 + box_w
+            ybox_size = y1 + box_h
+            
+            bbox_tag = cls + " " + str(xbox_size) + " x " + str(ybox_size)
 
-            cv2.rectangle(frame, (x1, y1), (x1+box_w, y1+box_h), trk.color, 2)
+            cv2.rectangle(frame, (x1, y1), (xbox_size, ybox_size), trk.color, 2)
             cv2.rectangle(frame, (x1, y1-35), (x1+len(cls)*19+60, y1), trk.color, -1)
-            cv2.putText(frame, cls, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, setcolor, 1)
-            print("objects = " , count)
+            cv2.putText(frame, bbx_tag, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, setcolor, 1)
+            print("objects = ", count, "box size = ", xbox_size, ybox_size)
 
     text = "objects = " + ('%.d' % count)
     cv2.putText(frame, text, (30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2)
